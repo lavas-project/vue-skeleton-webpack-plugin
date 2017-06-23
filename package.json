@@ -1,0 +1,25 @@
+{
+  "name": "vue-skeleton-webpack-plugin",
+  "version": "1.0.9",
+  "description": "A webpack plugin for generating skeleton of pages",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "buble src -o lib",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "loader-utils": "^1.1.0",
+    "memory-fs": "^0.4.1",
+    "vue-server-renderer": "^2.3.4",
+    "webpack": "^2.3.3",
+    "extract-text-webpack-plugin": "^2.0.0"
+  },
+  "devDependencies": {
+    "buble": "^0.15.2"
+  },
+  "author": "panyuqi",
+  "license": "ISC"
+}
