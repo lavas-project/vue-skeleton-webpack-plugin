@@ -5,11 +5,11 @@
 
 /* eslint-disable no-console */
 
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
-const MFS = require('memory-fs');
+import path from 'path';
+import webpack from 'webpack';
+import MFS from 'memory-fs';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import {createBundleRenderer} from 'vue-server-renderer';
 
 module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
     // get entry name from webpack.conf
@@ -31,9 +31,11 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
     // output to mfs
     serverCompiler.outputFileSystem = mfs;
     serverCompiler.watch({}, (err, stats) => {
+
         if (err) {
             reject(err);
         }
+
         stats = stats.toJson();
         stats.errors.forEach(err => {
             console.error(err);
@@ -41,6 +43,7 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
         stats.warnings.forEach(err => {
             console.warn(err);
         });
+
         let bundle = mfs.readFileSync(outputPath, 'utf-8');
         let skeletonCss = mfs.readFileSync(outputCssPath, 'utf-8');
         let renderer = createBundleRenderer(bundle);

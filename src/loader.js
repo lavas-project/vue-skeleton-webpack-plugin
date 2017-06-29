@@ -3,10 +3,11 @@
  * @author panyuqi <panyuqi@baidu.com>
  */
 
-const loaderUtils = require('loader-utils');
-const insertAt = require('./util').insertAt;
+import loaderUtils from 'loader-utils';
+import {insertAt} from './util';
 
 module.exports = function (source) {
+
     const entry = loaderUtils.getOptions(this).entry;
     let entryCap = entry.replace(/([a-z])(.*)/, (w, firstLetter, rest) => firstLetter.toUpperCase() + rest);
     let routesTemplate = 'routes: [';
