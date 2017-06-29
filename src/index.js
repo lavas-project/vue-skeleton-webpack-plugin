@@ -13,9 +13,33 @@ class SkeletonPlugin {
 
     apply(compiler) {
         let webpackConfig = this.options.webpackConfig;
+        let entry = webpackConfig.entry;
+        // cache entries
+        let skeletonEntries;
+        if (typeof entry === 'object') {
+            skeletonEntries = Object.assign({}, entry);
+        }
+        else {
+            skeletonEntries = {
+                app: entry
+            };
+        }
         compiler.plugin('compilation', compilation => {
 
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
+                let usedChunks = htmlPluginData.plugin.options.chunks;
+                let entryKey;
+                // find current processing entry
+                if (Array.isArray(usedChunks)) {
+                    entryKey = Object.keys(skeletonEntries)
+                        .filter(v => usedChunks.indexOf(v) > -1)[0];
+                }
+                if (!entryKey) {
+                    entryKey = 'app';
+                }
+
+                webpackConfig.entry = skeletonEntries[entryKey];
+                webpackConfig.output.filename = `skeleton-${entryKey}.js`;
 
                 ssr(webpackConfig).then(({skeletonHtml, skeletonCss}) => {
 

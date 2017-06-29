@@ -4,7 +4,7 @@
  */
 
 const loaderUtils = require('loader-utils');
-const insertAt = require('./utils').insertAt;
+const insertAt = require('./util').insertAt;
 
 module.exports = function (source) {
     const entry = loaderUtils.getOptions(this).entry;
