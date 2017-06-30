@@ -3,8 +3,10 @@
  * @author panyuqi <panyuqi@baidu.com>
  */
 
-import loaderUtils from 'loader-utils';
-import {insertAt} from './util';
+/* eslint-disable fecs-no-require */
+
+const loaderUtils = require('loader-utils');
+const insertAt = require('./util').insertAt;
 
 module.exports = function (source) {
 

@@ -1,6 +1,6 @@
 {
   "name": "vue-skeleton-webpack-plugin",
-  "version": "1.0.11",
+  "version": "1.0.13",
   "description": "A webpack plugin for generating skeleton of pages",
   "main": "lib/index.js",
   "files": [

@@ -3,8 +3,10 @@
  * @author panyuqi <panyuqi@baidu.com>
  */
 
-import ssr from './ssr';
-import {insertAt} from './util';
+/* eslint-disable no-console, fecs-no-require */
+
+const ssr = require('./ssr');
+const insertAt = require('./util').insertAt;
 
 class SkeletonPlugin {
 

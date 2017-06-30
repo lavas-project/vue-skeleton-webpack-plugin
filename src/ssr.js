@@ -3,13 +3,13 @@
  * @author panyuqi <panyuqi@baidu.com>
  */
 
-/* eslint-disable no-console */
+/* eslint-disable no-console, fecs-no-require */
 
-import path from 'path';
-import webpack from 'webpack';
-import MFS from 'memory-fs';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import {createBundleRenderer} from 'vue-server-renderer';
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
+const MFS = require('memory-fs');
 
 module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
     // get entry name from webpack.conf
