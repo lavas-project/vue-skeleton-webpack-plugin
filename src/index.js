@@ -3,20 +3,23 @@
  * @author panyuqi <panyuqi@baidu.com>
  */
 
-const ssr = require('./ssr');
-const insertAt = require('./util').insertAt;
+import ssr from './ssr';
+import {insertAt} from './util';
 
 class SkeletonPlugin {
+
     constructor(options = {}) {
         this.options = options;
     }
 
     apply(compiler) {
+
         let webpackConfig = this.options.webpackConfig;
         let entry = webpackConfig.entry;
         // cache entries
         let skeletonEntries;
-        if (typeof entry === 'object') {
+
+        if (Object.prototype.toString.call(entry).match('Object')) {
             skeletonEntries = Object.assign({}, entry);
         }
         else {
@@ -24,6 +27,7 @@ class SkeletonPlugin {
                 app: entry
             };
         }
+
         compiler.plugin('compilation', compilation => {
 
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
@@ -31,10 +35,10 @@ class SkeletonPlugin {
                 let entryKey;
                 // find current processing entry
                 if (Array.isArray(usedChunks)) {
-                    entryKey = Object.keys(skeletonEntries)
-                        .filter(v => usedChunks.indexOf(v) > -1)[0];
+                    entryKey = Object.keys(skeletonEntries);
+                    entryKey = entryKey.filter(v => usedChunks.indexOf(v) > -1)[0];
                 }
-                if (!entryKey) {
+                else {
                     entryKey = 'app';
                 }
 
