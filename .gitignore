@@ -2,3 +2,5 @@
 node_modules/
 lib
 npm-debug.log*
+coverage
+.nyc_output

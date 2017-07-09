@@ -34,6 +34,7 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
 
         if (err) {
             reject(err);
+            return;
         }
 
         stats = stats.toJson();

@@ -48,7 +48,6 @@ class SkeletonPlugin {
                 webpackConfig.output.filename = `skeleton-${entryKey}.js`;
 
                 ssr(webpackConfig).then(({skeletonHtml, skeletonCss}) => {
-
                     // insert inlined styles into html
                     let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
                     htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCss}</style>`, headTagEndPos);
