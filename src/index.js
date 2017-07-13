@@ -8,15 +8,26 @@
 const ssr = require('./ssr');
 const insertAt = require('./util').insertAt;
 
+const DEFAULT_PLUGIN_OPTIONS = {
+    webpackConfig: {},
+    insertAfter: '<div id="app">'
+};
+
+const DEFAULT_LOADER_OPTIONS = {
+    importTemplate: 'import [name] from \'@/pages/[name].vue\';',
+    routePathTemplate: '/skeleton-[name]',
+    insertAfter: 'routes: ['
+};
+
 class SkeletonPlugin {
 
     constructor(options = {}) {
-        this.options = options;
+        this.options = Object.assign({}, DEFAULT_PLUGIN_OPTIONS, options);
     }
 
     apply(compiler) {
 
-        let webpackConfig = this.options.webpackConfig;
+        let {webpackConfig, insertAfter} = this.options;
         let entry = webpackConfig.entry;
         // cache entries
         let skeletonEntries;
@@ -33,6 +44,7 @@ class SkeletonPlugin {
         compiler.plugin('compilation', compilation => {
 
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
+
                 let usedChunks = htmlPluginData.plugin.options.chunks;
                 let entryKey;
                 // find current processing entry
@@ -53,8 +65,7 @@ class SkeletonPlugin {
                     htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCss}</style>`, headTagEndPos);
 
                     // replace mounted point with ssr result in html
-                    let appTemplate = '<div id="app">';
-                    let appPos = htmlPluginData.html.lastIndexOf(appTemplate) + appTemplate.length;
+                    let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
                     htmlPluginData.html = insertAt(htmlPluginData.html, skeletonHtml, appPos);
                     callback(null, htmlPluginData);
                 });
@@ -62,14 +73,12 @@ class SkeletonPlugin {
         });
     }
 
-    static loader({entry, routerEntry, options = {}}) {
-        return {
-            resource: routerEntry,
+    static loader(ruleOptions = {}) {
+        return Object.assign(ruleOptions, {
             loader: require.resolve('./loader'),
-            options: Object.assign(options, {
-                entry
-            })
-        };
+            options: Object.assign({}, DEFAULT_LOADER_OPTIONS,
+                Object.assign({}, ruleOptions.options))
+        });
     }
 }
 

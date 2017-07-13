@@ -1,6 +1,6 @@
 {
   "name": "vue-skeleton-webpack-plugin",
-  "version": "1.0.13",
+  "version": "1.1.0",
   "description": "A webpack plugin for generating skeleton of pages",
   "main": "lib/index.js",
   "files": [
@@ -32,10 +32,12 @@
     "fecs": "^1.4.0",
     "html-webpack-plugin": "^2.29.0",
     "memory-fs": "^0.4.1",
+    "multipage-webpack-plugin": "^0.4.0",
     "nyc": "^10.3.2",
     "rimraf": "^2.6.0",
     "vue": "^2.3.3",
     "vue-loader": "^12.1.0",
+    "vue-router": "^2.7.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.4",
     "webpack-merge": "^4.1.0",

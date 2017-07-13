@@ -14,7 +14,10 @@ function resolve(dir) {
 }
 
 module.exports = {
-    entry: resolve('./src/entry.js'),
+    entry: {
+        page1: resolve('./src/pages/page1/entry.js'),
+        page2: resolve('./src/pages/page2/entry.js')
+    },
     output: {
         path: resolve('dist'),
         filename: utils.assetsPath('js/[name].js'),

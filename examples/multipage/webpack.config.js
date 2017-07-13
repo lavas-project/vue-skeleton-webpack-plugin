@@ -11,7 +11,7 @@ const path = require('path');
 const utils = require('./utils');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MultipageWebpackPlugin = require('multipage-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const SkeletonWebpackPlugin = require('../../lib');
@@ -26,11 +26,15 @@ let webpackConfig = merge(baseWebpackConfig, {
             sourceMap: false,
             extract: true
         }).concat(SkeletonWebpackPlugin.loader({
-            resource: resolve('src/entry.js'),
+            include: [
+                resolve('src/pages/page1/entry.js'),
+                resolve('src/pages/page2/entry.js')
+            ],
             options: {
-                entry: 'skeleton',
-                routePathTemplate: '/skeleton',
-                importTemplate: 'import [name] from \'./[name].vue\';'
+                entry: ['page1', 'page2'],
+                routePathTemplate: '/[name]-skeleton',
+                insertAfter: 'routes: [',
+                importTemplate: 'import [name] from \'./[name].skeleton.vue\';'
             }
         }))
     },
@@ -45,16 +49,14 @@ let webpackConfig = merge(baseWebpackConfig, {
             webpackConfig: require('./webpack.skeleton.conf')
         }),
 
-        new HtmlWebpackPlugin({
-            filename: utils.assetsPath('../index.html'),
-            template: path.join(__dirname, './index.html'),
-            inject: true,
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeAttributeQuotes: true
-            },
-            chunksSortMode: 'dependency'
+        new MultipageWebpackPlugin({
+            bootstrapFilename: 'manifest',
+            templateFilename: '[name].html',
+            templatePath: resolve('dist'),
+            htmlTemplatePath: resolve('./index.html'),
+            htmlWebpackPluginOptions: {
+                inject: true
+            }
         })
     ]
 });

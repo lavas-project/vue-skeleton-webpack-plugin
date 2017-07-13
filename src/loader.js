@@ -8,20 +8,33 @@
 const loaderUtils = require('loader-utils');
 const insertAt = require('./util').insertAt;
 
+const ENTRY_NAME_HOLDER = '[name]';
+
 module.exports = function (source) {
+    const options = loaderUtils.getOptions(this);
+    let {entry, importTemplate, routePathTemplate, insertAfter} = options;
 
-    const entry = loaderUtils.getOptions(this).entry;
-    let entryCap = entry.replace(/([a-z])(.*)/, (w, firstLetter, rest) => firstLetter.toUpperCase() + rest);
-    let routesTemplate = 'routes: [';
-    let routesPos = source.indexOf(routesTemplate) + routesTemplate.length;
+    // position to insert in router.js
+    let routesPos = source.indexOf(insertAfter) + insertAfter.length;
 
-    const SKELETON_IMPORT = `import ${entryCap} from '@/pages/${entryCap}.vue';`;
-    const SKELETON_ROUTE = `{
-        path: '/${entry}',
-        name: '${entry}',
-        component: ${entryCap}
-    },`;
+    if (!Array.isArray(entry)) {
+        entry = [entry];
+    }
 
-    source = insertAt(source, SKELETON_ROUTE, routesPos);
-    return SKELETON_IMPORT + source;
+    entry.forEach(entryName => {
+        // capitalize first letter
+        let entryCap = entryName.replace(/([a-z])(.*)/, (w, firstLetter, rest) => firstLetter.toUpperCase() + rest);
+        // route path
+        let skeletonRoutePath = routePathTemplate.replace(ENTRY_NAME_HOLDER, entryName);
+        let importExpression = importTemplate.replace(ENTRY_NAME_HOLDER, entryCap);
+        let routeExpression = `{
+            path: '${skeletonRoutePath}',
+            name: '${entryName}-skeleton',
+            component: ${entryCap}
+        },`;
+        source = insertAt(source, routeExpression, routesPos);
+        source += importExpression;
+    });
+
+    return source;
 };
