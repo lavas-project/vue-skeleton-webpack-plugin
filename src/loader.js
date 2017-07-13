@@ -8,7 +8,7 @@
 const loaderUtils = require('loader-utils');
 const insertAt = require('./util').insertAt;
 
-const ENTRY_NAME_HOLDER = '[name]';
+const ENTRY_NAME_HOLDER = /\[name\]/gi;
 
 module.exports = function (source) {
     const options = loaderUtils.getOptions(this);
