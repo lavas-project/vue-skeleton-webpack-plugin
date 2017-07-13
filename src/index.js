@@ -14,7 +14,7 @@ const DEFAULT_PLUGIN_OPTIONS = {
 };
 
 const DEFAULT_LOADER_OPTIONS = {
-    importTemplate: 'import [name] from \'@/pages/[name].vue\';',
+    importTemplate: 'import [nameCap] from \'@/pages/[nameCap].vue\';',
     routePathTemplate: '/skeleton-[name]',
     insertAfter: 'routes: ['
 };

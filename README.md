@@ -66,17 +66,19 @@ skeleton 对应的路由将被插入路由文件中，所以需要指定一个�
 
 `options`对象包含以下参数，将被传入 loader 中：
 - entry *必填*，支持字符串和数组类型，对应页面入口的名称
-- importTemplate *选填*，引入 skeleton 组件的表达式，默认值为`'import [name] from \'@/pages/[name].vue\';'`
+- importTemplate *选填*，引入 skeleton 组件的表达式，默认值为`'import [nameCap] from \'@/pages/[nameCap].vue\';'`
 - routePathTemplate *选填*，路由路径，默认值为`'/skeleton-[name]'`
 - insertAfter *选填*，路由插入位置，默认值为`'routes: ['`
 
-其中`importTemplate`和`routePathTemplate`中可以使用`[name]`占位符，后续将使用`entry`进行替换，在`importTemplate`中使用大写，而`routePathTemplate`中使用小写。
+在`importTemplate`和`routePathTemplate`中可以使用以下占位符：
+- `[name]` 和`entry`保持一致
+- `[nameCap]` `entry`首字母大写
 
 例如使用以下配置，将向路由文件中插入`'import Page1 from \'@/pages/Page1.vue\';'`和`'import Page2 from \'@/pages/Page2.vue\';'`两条语句。同时生成`/skeleton-page1`和`/skeleton-page2`两条路由规则。
 ```js
 {
     entry: ['page1', 'page2'],
-    importTemplate: 'import [name] from \'@/pages/[name].vue\';',
+    importTemplate: 'import [nameCap] from \'@/pages/[nameCap].vue\';',
     routePathTemplate: '/skeleton-[name]'
 }
 ```

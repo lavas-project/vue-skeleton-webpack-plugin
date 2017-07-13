@@ -9,6 +9,7 @@ const loaderUtils = require('loader-utils');
 const insertAt = require('./util').insertAt;
 
 const ENTRY_NAME_HOLDER = /\[name\]/gi;
+const ENTRY_NAME_CAP_HOLDER = /\[nameCap\]/gi;
 
 module.exports = function (source) {
     const options = loaderUtils.getOptions(this);
@@ -25,8 +26,10 @@ module.exports = function (source) {
         // capitalize first letter
         let entryCap = entryName.replace(/([a-z])(.*)/, (w, firstLetter, rest) => firstLetter.toUpperCase() + rest);
         // route path
-        let skeletonRoutePath = routePathTemplate.replace(ENTRY_NAME_HOLDER, entryName);
-        let importExpression = importTemplate.replace(ENTRY_NAME_HOLDER, entryCap);
+        let skeletonRoutePath = routePathTemplate.replace(ENTRY_NAME_HOLDER, entryName)
+            .replace(ENTRY_NAME_CAP_HOLDER, entryCap);
+        let importExpression = importTemplate.replace(ENTRY_NAME_HOLDER, entryName)
+            .replace(ENTRY_NAME_CAP_HOLDER, entryCap);
         let routeExpression = `{
             path: '${skeletonRoutePath}',
             name: '${entryName}-skeleton',
