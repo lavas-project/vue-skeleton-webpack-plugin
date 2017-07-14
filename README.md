@@ -2,6 +2,7 @@ vue-skeleton-webpack-plugin
 ===================
 
 [![npm version](https://badge.fury.io/js/vue-skeleton-webpack-plugin.svg)](https://badge.fury.io/js/vue-skeleton-webpack-plugin)
+[![Build Status](https://travis-ci.org/lavas-project/vue-skeleton-webpack-plugin.svg?branch=master)](https://travis-ci.org/lavas-project/vue-skeleton-webpack-plugin)
 
 [![NPM](https://nodei.co/npm/vue-skeleton-webpack-plugin.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vue-skeleton-webpack-plugin/)
 
@@ -61,14 +62,13 @@ module: {
 
 ### SkeletonWebpackPlugin.loader
 
-skeleton 对应的路由将被插入路由文件中，所以需要指定一个或多个路由文件，
-参考[ webpack模块规则](https://doc.webpack-china.org/configuration/module/#rule)，使用`resource/include/test`皆可指定 loader 应用的文件。
-
-`options`对象包含以下参数，将被传入 loader 中：
-- entry *必填*，支持字符串和数组类型，对应页面入口的名称
-- importTemplate *选填*，引入 skeleton 组件的表达式，默认值为`'import [nameCap] from \'@/pages/[nameCap].vue\';'`
-- routePathTemplate *选填*，路由路径，默认值为`'/skeleton-[name]'`
-- insertAfter *选填*，路由插入位置，默认值为`'routes: ['`
+参数分为两类：
+1. [ webpack模块规则](https://doc.webpack-china.org/configuration/module/#rule)，skeleton 对应的路由将被插入路由文件中，所以需要指定一个或多个路由文件，使用`resource/include/test`皆可指定 loader 应用的文件。
+2. `options` 将被传入 loader 中的参数对象，包含以下属性：
+    - entry *必填*，支持字符串和数组类型，对应页面入口的名称
+    - importTemplate *选填*，引入 skeleton 组件的表达式，默认值为`'import [nameCap] from \'@/pages/[nameCap].vue\';'`
+    - routePathTemplate *选填*，路由路径，默认值为`'/skeleton-[name]'`
+    - insertAfter *选填*，路由插入位置，默认值为`'routes: ['`
 
 在`importTemplate`和`routePathTemplate`中可以使用以下占位符：
 - `[name]` 和`entry`保持一致
