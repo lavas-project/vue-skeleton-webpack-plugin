@@ -13,12 +13,6 @@ const DEFAULT_PLUGIN_OPTIONS = {
     insertAfter: '<div id="app">'
 };
 
-const DEFAULT_LOADER_OPTIONS = {
-    importTemplate: 'import [nameCap] from \'@/pages/[nameCap].vue\';',
-    routePathTemplate: '/skeleton-[name]',
-    insertAfter: 'routes: ['
-};
-
 class SkeletonPlugin {
 
     constructor(options = {}) {
@@ -43,10 +37,12 @@ class SkeletonPlugin {
 
         compiler.plugin('compilation', compilation => {
 
+            // add listener for html-webpack-plugin
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
 
                 let usedChunks = htmlPluginData.plugin.options.chunks;
                 let entryKey;
+
                 // find current processing entry
                 if (Array.isArray(usedChunks)) {
                     entryKey = Object.keys(skeletonEntries);
@@ -56,6 +52,7 @@ class SkeletonPlugin {
                     entryKey = 'app';
                 }
 
+                // set current entry & output in webpack config
                 webpackConfig.entry = skeletonEntries[entryKey];
                 webpackConfig.output.filename = `skeleton-${entryKey}.js`;
 
@@ -76,8 +73,7 @@ class SkeletonPlugin {
     static loader(ruleOptions = {}) {
         return Object.assign(ruleOptions, {
             loader: require.resolve('./loader'),
-            options: Object.assign({}, DEFAULT_LOADER_OPTIONS,
-                Object.assign({}, ruleOptions.options))
+            options: Object.assign({}, ruleOptions.options)
         });
     }
 }

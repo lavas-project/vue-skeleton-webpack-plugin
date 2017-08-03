@@ -6,20 +6,27 @@ vue-skeleton-webpack-plugin
 
 [![NPM](https://nodei.co/npm/vue-skeleton-webpack-plugin.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vue-skeleton-webpack-plugin/)
 
-基于 vue 的 webpack 插件，为单页/多页应用生成 skeleton，提升首屏展示体验。
+这是一个基于 Vue 的 webpack 插件，为单页/多页应用生成骨架屏 skeleton，减少白屏时间，在页面完全渲染之前提升用户感知体验。
 
 ## 基本实现
 
-参考了[Ele.me的这篇文章](https://medium.com/elemefe/upgrading-ele-me-to-progressive-web-app-2a446832e509)，
+参考了[饿了么的 PWA 升级实践](https://huangxuan.me/2017/07/12/upgrading-eleme-to-pwa/)一文，
 使用服务端渲染在构建时渲染 skeleton 组件，将 DOM 和样式内联到最终输出的 html 中。
 
 另外，为了开发时调试方便，会将对应路由写入`router.js`中，可通过`/skeleton`路由访问。
+
+插件具体实现可参考[我的这篇文章](https://xiaoiver.github.io/coding/2017/07/30/%E4%B8%BAvue%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E9%AA%A8%E6%9E%B6%E5%B1%8F.html)
 
 ## 使用方法
 
 安装：
 ```bash
 npm install vue-skeleton-webpack-plugin
+```
+
+运行测试用例：
+```bash
+npm run test
 ```
 
 在 webpack 中引入插件：

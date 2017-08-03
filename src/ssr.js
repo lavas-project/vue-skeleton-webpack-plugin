@@ -1,5 +1,6 @@
 /**
  * @file ssr
+ * @desc Use vue ssr to render skeleton components. The result contains html and css.
  * @author panyuqi <panyuqi@baidu.com>
  */
 
@@ -20,7 +21,7 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
 
     console.log(`Generate skeleton for ${outputBasename}...`);
 
-    // extract css
+    // extract css into a single file
     serverWebpackConfig.plugins.push(new ExtractTextPlugin({
         filename: outputCssBasename
     }));
@@ -47,8 +48,9 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
 
         let bundle = mfs.readFileSync(outputPath, 'utf-8');
         let skeletonCss = mfs.readFileSync(outputCssPath, 'utf-8');
+        // create renderer with bundle
         let renderer = createBundleRenderer(bundle);
-        // ssr skeleton
+        // use vue ssr to render skeleton
         renderer.renderToString({}, (err, skeletonHtml) => {
             if (err) {
                 reject(err);
