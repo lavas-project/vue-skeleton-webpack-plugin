@@ -31,7 +31,7 @@ class SkeletonPlugin {
         }
         else {
             skeletonEntries = {
-                app: entry
+                main: entry
             };
         }
 
@@ -40,16 +40,15 @@ class SkeletonPlugin {
             // add listener for html-webpack-plugin
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
 
-                let usedChunks = htmlPluginData.plugin.options.chunks;
+                let usedChunks = Object.keys(htmlPluginData.assets.chunks);
                 let entryKey;
 
                 // find current processing entry
                 if (Array.isArray(usedChunks)) {
-                    entryKey = Object.keys(skeletonEntries);
-                    entryKey = entryKey.filter(v => usedChunks.indexOf(v) > -1)[0];
+                    entryKey = Object.keys(skeletonEntries).find(v => usedChunks.indexOf(v) > -1);
                 }
                 else {
-                    entryKey = 'app';
+                    entryKey = 'main';
                 }
 
                 // set current entry & output in webpack config

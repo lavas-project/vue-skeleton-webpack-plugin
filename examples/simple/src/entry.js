@@ -6,6 +6,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+console.log('entry...')
+
 Vue.use(Router);
 
 let router = new Router({
