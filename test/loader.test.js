@@ -35,7 +35,7 @@ test('it should run successfully', async t => {
 });
 
 test('it should insert skeleton route into routes', async t => {
-    let htmlContent = await readFile(path.join(webpackBuildPath, 'static/js/main.js'));
+    let htmlContent = await readFile(path.join(webpackBuildPath, 'static/js/app.js'));
     htmlContent = htmlContent.toString();
     let insertedRoute = `routes: [{
         path: '/skeleton',`;

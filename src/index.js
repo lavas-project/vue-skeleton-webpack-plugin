@@ -6,12 +6,14 @@
 /* eslint-disable no-console, fecs-no-require */
 
 const ssr = require('./ssr');
-const insertAt = require('./util').insertAt;
+const {insertAt, isObject} = require('./util');
 
 const DEFAULT_PLUGIN_OPTIONS = {
     webpackConfig: {},
     insertAfter: '<div id="app">'
 };
+
+const DEFAULT_ENTRY_NAME = 'main';
 
 class SkeletonPlugin {
 
@@ -26,12 +28,18 @@ class SkeletonPlugin {
         // cache entries
         let skeletonEntries;
 
-        if (Object.prototype.toString.call(entry).match('Object')) {
+        if (isObject(entry)) {
             skeletonEntries = Object.assign({}, entry);
         }
         else {
+            let entryName = DEFAULT_ENTRY_NAME;
+            let parentEntry = compiler.options.entry;
+
+            if (isObject(parentEntry)) {
+                entryName = Object.keys(parentEntry)[0];
+            }
             skeletonEntries = {
-                main: entry
+                [entryName]: entry
             };
         }
 
@@ -48,7 +56,7 @@ class SkeletonPlugin {
                     entryKey = Object.keys(skeletonEntries).find(v => usedChunks.indexOf(v) > -1);
                 }
                 else {
-                    entryKey = 'main';
+                    entryKey = DEFAULT_ENTRY_NAME;
                 }
 
                 // set current entry & output in webpack config

@@ -1,7 +1,7 @@
 Change History
 ==============
 
-v1.1.3
+v1.1.4
 ---
 * 支持 webpack 3.0.0 以上，修复了不填写 entry 名称导致的 bug
 

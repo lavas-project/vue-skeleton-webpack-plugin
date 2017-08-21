@@ -5,8 +5,14 @@
 
 /* eslint-disable fecs-no-require */
 
-module.exports.insertAt = (origin, str, pos) => [
-    origin.slice(0, pos),
-    str,
-    origin.slice(pos)
-].join('');
+module.exports = {
+    insertAt: (origin, str, pos) => {
+        return [
+            origin.slice(0, pos),
+            str,
+            origin.slice(pos)
+        ].join('');
+    },
+
+    isObject: (obj) => Object.prototype.toString.call(obj).match('Object')
+}
