@@ -1,6 +1,6 @@
 {
   "name": "vue-skeleton-webpack-plugin",
-  "version": "1.1.4",
+  "version": "0.1.5",
   "description": "A webpack plugin for generating skeleton of pages",
   "main": "lib/index.js",
   "files": [
@@ -13,11 +13,11 @@
     "test": "npm run build && ./node_modules/.bin/nyc ava"
   },
   "dependencies": {
-    "extract-text-webpack-plugin": "^3.0.0",
+    "extract-text-webpack-plugin": "^2.0.0",
     "loader-utils": "^1.1.0",
     "memory-fs": "^0.4.1",
     "vue-server-renderer": "^2.3.4",
-    "webpack": "^3.5.4"
+    "webpack": "^2.3.3"
   },
   "devDependencies": {
     "ava": "^0.18.2",
@@ -42,6 +42,9 @@
     "vue-template-compiler": "^2.3.4",
     "webpack-merge": "^4.1.0",
     "webpack-node-externals": "^1.6.0"
+  },
+  "peerDependencies": {
+    "webpack": "^2.0.0"
   },
   "ava": {
     "concurrency": 5,
