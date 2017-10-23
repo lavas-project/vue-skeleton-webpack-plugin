@@ -10,7 +10,8 @@ const {insertAt, isObject} = require('./util');
 
 const DEFAULT_PLUGIN_OPTIONS = {
     webpackConfig: {},
-    insertAfter: '<div id="app">'
+    insertAfter: '<div id="app">',
+    quiet: false
 };
 
 const DEFAULT_ENTRY_NAME = 'main';
@@ -23,7 +24,7 @@ class SkeletonPlugin {
 
     apply(compiler) {
 
-        let {webpackConfig, insertAfter} = this.options;
+        let {webpackConfig, insertAfter, quiet} = this.options;
         let entry = webpackConfig.entry;
         // cache entries
         let skeletonEntries;
@@ -63,15 +64,18 @@ class SkeletonPlugin {
                 webpackConfig.entry = skeletonEntries[entryKey];
                 webpackConfig.output.filename = `skeleton-${entryKey}.js`;
 
-                ssr(webpackConfig).then(({skeletonHtml, skeletonCss}) => {
-                    // insert inlined styles into html
-                    let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
-                    htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCss}</style>`, headTagEndPos);
+                ssr(webpackConfig, {quiet}).then(({skeletonHtml, skeletonCss, watching}) => {
+                    // close webpack watch first
+                    watching.close(() => {
+                        // insert inlined styles into html
+                        let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
+                        htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCss}</style>`, headTagEndPos);
 
-                    // replace mounted point with ssr result in html
-                    let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
-                    htmlPluginData.html = insertAt(htmlPluginData.html, skeletonHtml, appPos);
-                    callback(null, htmlPluginData);
+                        // replace mounted point with ssr result in html
+                        let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
+                        htmlPluginData.html = insertAt(htmlPluginData.html, skeletonHtml, appPos);
+                        callback(null, htmlPluginData);
+                    });
                 });
             });
         });

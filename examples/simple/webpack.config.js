@@ -42,7 +42,8 @@ let webpackConfig = merge(baseWebpackConfig, {
         }),
 
         new SkeletonWebpackPlugin({
-            webpackConfig: require('./webpack.skeleton.conf')
+            webpackConfig: require('./webpack.skeleton.conf'),
+            quiet: true
         }),
 
         new HtmlWebpackPlugin({
