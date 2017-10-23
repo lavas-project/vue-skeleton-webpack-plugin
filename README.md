@@ -66,6 +66,7 @@ module: {
 
 - webpackConfig *必填*，渲染 skeleton 的 webpack 配置对象
 - insertAfter *选填*，渲染 DOM 结果插入位置，默认值为`'<div id="app">'`
+- quiet *选填*，在服务端渲染时是否需要输出信息到控制台
 
 ### SkeletonWebpackPlugin.loader
 
@@ -95,4 +96,3 @@ module: {
 具体应用示例可参考[Lavas Appshell模版](https://github.com/lavas-project/lavas-template-vue-appshell)和[Lavas MPA模版](https://github.com/lavas-project/lavas-template-vue-mpa)。
 
 或者参考[examples](https://github.com/lavas-project/vue-skeleton-webpack-plugin/tree/master/examples)下的测试用例，其中也包含了单页和多页情况。
-

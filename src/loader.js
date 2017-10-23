@@ -50,8 +50,9 @@ module.exports = function (source) {
         // insert route object into routes array
         source = insertAt(source, routeExpression, routesPos);
 
-        // insert import sentence in the head
-        source += importExpression;
+        // insert import clauses at the bottom. These clauses will be hoisted base on ES Module Spec
+        source = `${source}
+${importExpression}`;
     });
 
     return source;
