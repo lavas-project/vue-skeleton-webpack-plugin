@@ -12,14 +12,16 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
 const MFS = require('memory-fs');
 
-module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
+module.exports = (serverWebpackConfig, {quiet = false}) => new Promise((resolve, reject) => {
     // get entry name from webpack.conf
     let outputPath = path.join(serverWebpackConfig.output.path, serverWebpackConfig.output.filename);
     let outputBasename = path.basename(outputPath, path.extname(outputPath));
     let outputCssBasename = `${outputBasename}.css`;
     let outputCssPath = path.join(serverWebpackConfig.output.path, outputCssBasename);
 
-    console.log(`Generate skeleton for ${outputBasename}...`);
+    if (!quiet) {
+        console.log(`Generate skeleton for ${outputBasename}...`);
+    }
 
     // extract css into a single file
     serverWebpackConfig.plugins.push(new ExtractTextPlugin({
@@ -31,7 +33,7 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
     let mfs = new MFS();
     // output to mfs
     serverCompiler.outputFileSystem = mfs;
-    serverCompiler.watch({}, (err, stats) => {
+    let watching = serverCompiler.watch({}, (err, stats) => {
 
         if (err) {
             reject(err);
@@ -53,10 +55,10 @@ module.exports = serverWebpackConfig => new Promise((resolve, reject) => {
         // use vue ssr to render skeleton
         renderer.renderToString({}, (err, skeletonHtml) => {
             if (err) {
-                reject(err);
+                watching.close(() => reject(err));
             }
             else {
-                resolve({skeletonHtml, skeletonCss});
+                resolve({skeletonHtml, skeletonCss, watching});
             }
         });
     });
