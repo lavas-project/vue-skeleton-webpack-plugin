@@ -1,6 +1,6 @@
 {
   "name": "vue-skeleton-webpack-plugin",
-  "version": "0.1.6",
+  "version": "0.1.9",
   "description": "A webpack plugin for generating skeleton of pages",
   "main": "lib/index.js",
   "files": [
@@ -16,7 +16,7 @@
     "extract-text-webpack-plugin": "^2.0.0",
     "loader-utils": "^1.1.0",
     "memory-fs": "^0.4.1",
-    "vue-server-renderer": "^2.3.4",
+    "vue-server-renderer": "^2.5.2",
     "webpack": "^2.3.3"
   },
   "devDependencies": {
