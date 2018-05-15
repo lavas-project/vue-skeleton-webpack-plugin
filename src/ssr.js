@@ -13,6 +13,7 @@ const NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
 const LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');
 const LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
+const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin');
 const ExternalsPlugin = require('webpack/lib/ExternalsPlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
@@ -40,7 +41,12 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
     childCompiler.context = context;
     new LibraryTemplatePlugin(undefined, 'commonjs2').apply(childCompiler);
     new NodeTargetPlugin().apply(childCompiler);
-    new SingleEntryPlugin(context, serverWebpackConfig.entry, undefined).apply(childCompiler);
+    if (Array.isArray(serverWebpackConfig.entry)) {
+        new MultiEntryPlugin(context, serverWebpackConfig.entry, undefined).apply(childCompiler);
+    }
+    else {
+        new SingleEntryPlugin(context, serverWebpackConfig.entry, undefined).apply(childCompiler);
+    }
     new LoaderTargetPlugin('node').apply(childCompiler);
     new ExternalsPlugin('commonjs2', serverWebpackConfig.externals || nodeExternals({
         whitelist: /\.css$/
