@@ -13,6 +13,7 @@ const NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
 const LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');
 const LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
+const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin');
 const ExternalsPlugin = require('webpack/lib/ExternalsPlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
@@ -30,6 +31,27 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
         console.log(`Generate skeleton for ${outputBasename}...`);
     }
 
+    // if user passed in some special module rules for Skeleton, use it directly
+    let originalRules = compilation.options.module.rules;
+    if (serverWebpackConfig.module && serverWebpackConfig.module.rules) {
+        compilation.options.module.rules = serverWebpackConfig.module.rules;
+    }
+    else {
+        // otherwise use rules from parent compiler
+        let vueRule = compilation.options.module.rules.find(rule => {
+            return rule.test && rule.test.test('test.vue');
+        });
+
+        if (vueRule.use && vueRule.use.length) {
+            let vueLoader = vueRule.use.find(rule => {
+                return rule.loader = 'vue-loader';
+            });
+
+            vueLoader.options.extractCSS = true;
+            delete vueLoader.options.loaders;
+        }
+    }
+
     const outputOptions = {
         filename: outputJSPath,
         publicPath: outputPublicPath
@@ -40,7 +62,12 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
     childCompiler.context = context;
     new LibraryTemplatePlugin(undefined, 'commonjs2').apply(childCompiler);
     new NodeTargetPlugin().apply(childCompiler);
-    new SingleEntryPlugin(context, serverWebpackConfig.entry, undefined).apply(childCompiler);
+    if (Array.isArray(serverWebpackConfig.entry)) {
+        new MultiEntryPlugin(context, serverWebpackConfig.entry, undefined).apply(childCompiler);
+    }
+    else {
+        new SingleEntryPlugin(context, serverWebpackConfig.entry, undefined).apply(childCompiler);
+    }
     new LoaderTargetPlugin('node').apply(childCompiler);
     new ExternalsPlugin('commonjs2', serverWebpackConfig.externals || nodeExternals({
         whitelist: /\.css$/
@@ -60,7 +87,10 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
             }
             else {
                 let bundle = childCompilation.assets[outputJSPath].source();
-                let skeletonCss = childCompilation.assets[outputCSSPath].source();
+                let skeletonCSS = '';
+                if (childCompilation.assets[outputCSSPath]) {
+                    skeletonCSS = childCompilation.assets[outputCSSPath].source();
+                }
 
                 // delete JS & CSS files
                 delete compilation.assets[outputJSPath];
@@ -75,7 +105,8 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
                         reject(err);
                     }
                     else {
-                        resolve({skeletonHtml, skeletonCss});
+                        compilation.options.module.rules = originalRules;
+                        resolve({skeletonHtml, skeletonCSS});
                     }
                 });
             }

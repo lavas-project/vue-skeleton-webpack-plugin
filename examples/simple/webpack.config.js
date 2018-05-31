@@ -45,6 +45,7 @@ let webpackConfig = merge(baseWebpackConfig, {
             webpackConfig: {
                 entry: {
                     app: resolve('./src/entry-skeleton.js')
+                    // app: [resolve('./src/entry-skeleton.js')]
                 }
             },
             quiet: true

@@ -1,6 +1,14 @@
 Change History
 ==============
 
+v1.1.17
+---
+* [Fix] 修复 cssExtract 带来的问题。
+
+v1.1.16
+---
+* [Fix] 紧急修复 `entry` 传入数组导致编译失败的问题。
+
 v1.1.14
 ---
 * [Feature] 简化 `webpackConfig` 配置项，不需要提供完整的 webpack 配置对象，只需要包含 `entry` 指向 `entry-skeleton.js` 即可。
