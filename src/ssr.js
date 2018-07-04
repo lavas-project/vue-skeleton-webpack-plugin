@@ -20,8 +20,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
 const nodeExternals = require('webpack-node-externals');
 
+let MiniCssExtractPlugin;
 if (webpackMajorVersion === '4') {
-    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+    MiniCssExtractPlugin = require('mini-css-extract-plugin');
 }
 
 module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, compilation, context}) {
