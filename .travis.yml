@@ -4,8 +4,8 @@ node_js:
   - lts/*
   - 6.9
 env:
-  - WEBPACK_VERSION=3 VUE_LOADER_VERSION=14.0.0
-  - WEBPACK_VERSION=4 VUE_LOADER_VERSION=15.0.0
+  - WEBPACK_VERSION=3 VUE_LOADER_VERSION=^14.0.0
+  - WEBPACK_VERSION=4 VUE_LOADER_VERSION=^15.0.0
 install:
   - npm install --ignore-scripts
   - npm rm webpack

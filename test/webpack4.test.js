@@ -15,8 +15,6 @@ import {
     webpackMajorVersion
 } from './utils.js';
 
-import simpleConfig from '../examples/webpack4/webpack.config.js';
-
 const fs = testFs;
 
 const simpleExamplePath = path.resolve(__dirname, '../examples/webpack4');
@@ -27,6 +25,7 @@ const readFile = Promise.promisify(fs.readFile, {context: fs});
 let webpackBuildStats = null;
 
 if (webpackMajorVersion  === '4') {
+    let simpleConfig = require('../examples/webpack4/webpack.config.js');
 
     test.before('run webpack build first', async t => {
         webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig);

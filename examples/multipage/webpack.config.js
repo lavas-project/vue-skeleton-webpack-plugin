@@ -55,7 +55,7 @@ let webpackConfig = merge(baseWebpackConfig, {
         }),
 
         new MultipageWebpackPlugin({
-            bootstrapFilename: 'manifest',
+            bootstrapFilename: utils.assetsPath('js/manifest.js'),
             templateFilename: '[name].html',
             templatePath: resolve('dist'),
             htmlTemplatePath: resolve('./index.html'),

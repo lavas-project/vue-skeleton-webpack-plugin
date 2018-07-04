@@ -45,8 +45,7 @@ else {
     test('it should insert skeleton route into routes', async t => {
         let htmlContent = await readFile(path.join(webpackBuildPath, 'static/js/app.js'));
         htmlContent = htmlContent.toString();
-        let insertedRoute = `routes: [{
-            path: '/skeleton',`;
+        let insertedRoute = `path: '/skeleton',`;
         t.true(htmlContent.includes(insertedRoute));
     });
 }

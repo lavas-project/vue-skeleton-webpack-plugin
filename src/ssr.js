@@ -16,10 +16,13 @@ const LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin');
 const ExternalsPlugin = require('webpack/lib/ExternalsPlugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
 const nodeExternals = require('webpack-node-externals');
+
+if (webpackMajorVersion === '4') {
+    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+}
 
 module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, compilation, context}) {
     let {path: outputPath, publicPath: outputPublicPath} = compilation.outputOptions;
@@ -33,24 +36,27 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
         console.log(`Generate skeleton for ${outputBasename}...`);
     }
 
-    // if user passed in some special module rules for Skeleton, use it directly
-    let originalRules = compilation.options.module.rules;
-    if (serverWebpackConfig.module && serverWebpackConfig.module.rules) {
-        compilation.options.module.rules = serverWebpackConfig.module.rules;
-    }
-    else {
-        // otherwise use rules from parent compiler
-        let vueRule = compilation.options.module.rules.find(rule => {
-            return rule.test && rule.test.test('test.vue');
-        });
-
-        if (vueRule && vueRule.use && vueRule.use.length) {
-            let vueLoader = vueRule.use.find(rule => {
-                return rule.loader = 'vue-loader';
+    let originalRules;
+    if (webpackMajorVersion !== '4') {
+        // if user passed in some special module rules for Skeleton, use it directly
+        originalRules = compilation.options.module.rules;
+        if (serverWebpackConfig.module && serverWebpackConfig.module.rules) {
+            compilation.options.module.rules = serverWebpackConfig.module.rules;
+        }
+        else {
+            // otherwise use rules from parent compiler
+            let vueRule = compilation.options.module.rules.find(rule => {
+                return rule.test && rule.test.test && rule.test.test('test.vue');
             });
 
-            vueLoader.options.extractCSS = true;
-            delete vueLoader.options.loaders;
+            if (vueRule && vueRule.use && vueRule.use.length) {
+                let vueLoader = vueRule.use.find(rule => {
+                    return rule.loader = 'vue-loader';
+                });
+
+                vueLoader.options.extractCSS = true;
+                delete vueLoader.options.loaders;
+            }
         }
     }
 
@@ -114,7 +120,9 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
                         reject(err);
                     }
                     else {
-                        compilation.options.module.rules = originalRules;
+                        if (webpackMajorVersion !== '4') {
+                            compilation.options.module.rules = originalRules;
+                        }
                         resolve({skeletonHtml, skeletonCSS});
                     }
                 });

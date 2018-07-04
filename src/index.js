@@ -48,7 +48,9 @@ class SkeletonPlugin {
     }
 
     generateSkeleton(compiler, compilation, options, htmlPluginData, callback) {
-        let {webpackConfig, insertAfter, quiet, router, minimize} = options;
+        let {insertAfter, quiet, router, minimize} = options;
+
+        let webpackConfig = Object.assign({}, options.webpackConfig)
 
         let entry = webpackConfig.entry;
         // cache entries

@@ -26,14 +26,14 @@ let webpackConfig = merge(baseWebpackConfig, {
             sourceMap: false,
             extract: true
         })
-        // .concat(SkeletonWebpackPlugin.loader({
-        //     resource: resolve('src/entry.js'),
-        //     options: {
-        //         entry: 'skeleton',
-        //         routePathTemplate: '/skeleton',
-        //         importTemplate: 'import [name] from \'./[name].vue\';'
-        //     }
-        // }))
+        .concat(SkeletonWebpackPlugin.loader({
+            resource: resolve('src/entry.js'),
+            options: {
+                entry: 'skeleton',
+                routePathTemplate: '/skeleton',
+                importTemplate: 'import [name] from \'./[name].vue\';'
+            }
+        }))
     },
     devtool: false,
     plugins: [
