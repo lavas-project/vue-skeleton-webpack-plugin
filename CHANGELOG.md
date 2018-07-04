@@ -2,6 +2,11 @@ Change History
 ==============
 
 =======
+v1.1.18
+---
+* [Feature] 支持 Webpack 4 #13
+* [Fix] #23
+
 v1.1.17
 ---
 * [Fix] 修复 cssExtract 带来的问题。
