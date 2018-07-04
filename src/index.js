@@ -79,35 +79,40 @@ class SkeletonPlugin {
         else {
             entryKey = DEFAULT_ENTRY_NAME;
         }
-
-        // set current entry & output in webpack config
-        webpackConfig.entry = skeletonEntries[entryKey];
-        if (!webpackConfig.output) {
-            webpackConfig.output = {};
-        }
-        webpackConfig.output.filename = `skeleton-${entryKey}.js`;
-
-        ssr(webpackConfig, {
-            quiet, compilation, context: compiler.context
-        }).then(({skeletonHtml, skeletonCSS, watching}) => {
-            // insert inlined styles into html
-            let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
-            htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCSS}</style>`, headTagEndPos);
-
-            // replace mounted point with ssr result in html
-            let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
-
-            // inject router code in SPA mode
-            let routerScript = '';
-            if (router) {
-                let isMPA = !!(Object.keys(skeletonEntries).length > 1);
-                routerScript = generateRouterScript(router, minimize, isMPA, entryKey);
+        // make sure current entry has skeleton config, fix #23
+        if (entryKey) {
+            // set current entry & output in webpack config
+            webpackConfig.entry = skeletonEntries[entryKey];
+            if (!webpackConfig.output) {
+                webpackConfig.output = {};
             }
-            htmlPluginData.html = insertAt(htmlPluginData.html, skeletonHtml + routerScript, appPos);
+            webpackConfig.output.filename = `skeleton-${entryKey}.js`;
+
+            ssr(webpackConfig, {
+                quiet, compilation, context: compiler.context
+            }).then(({skeletonHtml, skeletonCSS, watching}) => {
+                // insert inlined styles into html
+                let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
+                htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCSS}</style>`, headTagEndPos);
+
+                // replace mounted point with ssr result in html
+                let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
+
+                // inject router code in SPA mode
+                let routerScript = '';
+                if (router) {
+                    let isMPA = !!(Object.keys(skeletonEntries).length > 1);
+                    routerScript = generateRouterScript(router, minimize, isMPA, entryKey);
+                }
+                htmlPluginData.html = insertAt(htmlPluginData.html, skeletonHtml + routerScript, appPos);
+                callback(null, htmlPluginData);
+            }).catch((e) => {
+                console.log(e);
+            });
+        }
+        else {
             callback(null, htmlPluginData);
-        }).catch((e) => {
-            console.log(e);
-        });
+        }
     }
 
     static loader(ruleOptions = {}) {

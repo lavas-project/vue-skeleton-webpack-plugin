@@ -5,9 +5,6 @@
 
 import Vue from 'vue';
 import Router from 'vue-router';
-import './main.css';
-
-console.log('entry...')
 
 Vue.use(Router);
 

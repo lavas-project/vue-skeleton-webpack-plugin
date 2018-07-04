@@ -1,5 +1,5 @@
 /**
- * @file test multipage
+ * @file test multipage, use multipage-webpack-plugin
  * @author panyuqi (pyqiverson@gmail.com)
  */
 
