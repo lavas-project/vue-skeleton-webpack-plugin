@@ -125,6 +125,20 @@ SPA 中多个 Skeleton:
 
 ## 常见问题
 
+### Webpack & ExtractTextWebpackPlugin
+
+插件需要使用与 Webpack 版本配套的插件进行样式分离。
+
+Webpack 3.x 请安装：
+```bash
+npm install --save-dev extract-text-webpack-plugin
+```
+
+Webpack 4.x 请安装：
+```bash
+npm install --save-dev mini-css-extract-plugin
+```
+
 ### 未开启样式分离
 
 运行出现如下错误：

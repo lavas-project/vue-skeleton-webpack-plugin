@@ -8,6 +8,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const webpackMajorVersion = require('webpack/package.json').version.split('.')[0];
 const NodeTemplatePlugin = require('webpack/lib/node/NodeTemplatePlugin');
 const NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
 const LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');
@@ -15,6 +16,7 @@ const LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin');
 const ExternalsPlugin = require('webpack/lib/ExternalsPlugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
 const nodeExternals = require('webpack-node-externals');
@@ -72,9 +74,16 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
     new ExternalsPlugin('commonjs2', serverWebpackConfig.externals || nodeExternals({
         whitelist: /\.css$/
     })).apply(childCompiler);
-    new ExtractTextPlugin({
-        filename: outputCSSPath
-    }).apply(childCompiler);
+    if (webpackMajorVersion === '4') {
+        new MiniCssExtractPlugin({
+            filename: outputCSSPath
+        }).apply(childCompiler);
+    }
+    else {
+        new ExtractTextPlugin({
+            filename: outputCSSPath
+        }).apply(childCompiler);
+    }
 
     return new Promise((resolve, reject) => {
         childCompiler.runAsChild((err, entries, childCompilation) => {

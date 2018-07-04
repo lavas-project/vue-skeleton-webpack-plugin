@@ -30,12 +30,13 @@ test.before('run webpack build first', async t => {
 });
 
 test('it should run successfully', async t => {
-    let {stats, errors} = webpackBuildStats;
-    t.falsy(stats.hasWarnings() && errors.hasWarnings());
+    let {errors, warnings} = webpackBuildStats;
+    t.falsy(errors.length && warnings.length);
 });
 
 test('it should insert the ssr result of skeleton into mounted point', async t => {
     let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'));
+
     htmlContent = htmlContent.toString();
     // ssr dom has been injected into mounted point
     t.true(htmlContent.includes('<div data-server-rendered=true class=skeleton-wrapper'));

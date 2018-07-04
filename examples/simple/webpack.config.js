@@ -25,30 +25,21 @@ let webpackConfig = merge(baseWebpackConfig, {
         rules: utils.styleLoaders({
             sourceMap: false,
             extract: true
-        }).concat(SkeletonWebpackPlugin.loader({
-            resource: resolve('src/entry.js'),
-            options: {
-                entry: 'skeleton',
-                routePathTemplate: '/skeleton',
-                importTemplate: 'import [name] from \'./[name].vue\';'
-            }
-        }))
+        })
+        // .concat(SkeletonWebpackPlugin.loader({
+        //     resource: resolve('src/entry.js'),
+        //     options: {
+        //         entry: 'skeleton',
+        //         routePathTemplate: '/skeleton',
+        //         importTemplate: 'import [name] from \'./[name].vue\';'
+        //     }
+        // }))
     },
     devtool: false,
     plugins: [
 
         new ExtractTextPlugin({
             filename: utils.assetsPath('css/[name].css')
-        }),
-
-        new SkeletonWebpackPlugin({
-            webpackConfig: {
-                entry: {
-                    app: resolve('./src/entry-skeleton.js')
-                    // app: [resolve('./src/entry-skeleton.js')]
-                }
-            },
-            quiet: true
         }),
 
         new HtmlWebpackPlugin({
@@ -61,6 +52,16 @@ let webpackConfig = merge(baseWebpackConfig, {
                 removeAttributeQuotes: true
             },
             chunksSortMode: 'dependency'
+        }),
+
+        new SkeletonWebpackPlugin({
+            webpackConfig: {
+                entry: {
+                    app: resolve('./src/entry-skeleton.js')
+                    // app: [resolve('./src/entry-skeleton.js')]
+                }
+            },
+            quiet: true
         })
     ]
 });

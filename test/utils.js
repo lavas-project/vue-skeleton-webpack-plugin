@@ -8,10 +8,20 @@
 const MFS = require('memory-fs');
 const Promise = require('bluebird');
 const webpack = require('webpack');
+const webpackMajorVersion = require('webpack/package.json').version.split('.')[0];
 
 const outputFileSystem = new MFS();
 
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
+    if (webpackMajorVersion === '4') {
+        config.mode = 'production';
+        // config.plugins.unshift(new webpack.LoaderOptionsPlugin({
+        //     options: {
+        //         context: process.cwd()
+        //     }
+        // }));
+    }
+
     const compiler = webpack(config);
 
     compiler.outputFileSystem = outputFileSystem;

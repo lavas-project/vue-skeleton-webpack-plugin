@@ -35,8 +35,12 @@ module.exports = {
                 test: /\.vue$/,
                 use: [
                     {
+                        // loader: 'vue-loader',
+                        // options: vueLoaderConfig
                         loader: 'vue-loader',
-                        options: vueLoaderConfig
+                        options: {
+                            extractCSS: true
+                        }
                     }
                 ],
                 include: [resolve('src')]

@@ -30,8 +30,8 @@ test.before('run webpack build first', async t => {
 });
 
 test('it should run successfully', async t => {
-    let {stats, errors} = webpackBuildStats;
-    t.falsy(stats.hasWarnings() && errors.hasWarnings());
+    let {errors, warnings} = webpackBuildStats;
+    t.falsy(errors.length && warnings.length);
 });
 
 test('it should insert multi skeletons into index.html', async t => {
