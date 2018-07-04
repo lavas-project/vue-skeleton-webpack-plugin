@@ -14,11 +14,11 @@ import {
     testFs
 } from './utils.js';
 
-import multipageConfig from '../examples/multipage2/webpack.config.js';
+import multipageConfig from '../examples/multipage3/webpack.config.js';
 
 const fs = testFs;
 
-const multipageExamplePath = path.resolve(__dirname, '../examples/multipage2');
+const multipageExamplePath = path.resolve(__dirname, '../examples/multipage3');
 const webpackBuildPath = path.resolve(multipageExamplePath, './dist');
 
 const readFile = Promise.promisify(fs.readFile, {context: fs});
@@ -34,13 +34,13 @@ test('it should run successfully', async t => {
     t.falsy(stats.hasWarnings() && errors.hasWarnings());
 });
 
-test('it should insert relative skeleton into every page', async t => {
+test('it should insert skeleton into page1, but not page2', async t => {
     let result = await Promise.all([
         readFile(path.join(webpackBuildPath, 'page1.html')),
         readFile(path.join(webpackBuildPath, 'page2.html'))
     ]);
     t.true(result[0].toString().includes('Skeleton of Page1'));
-    t.true(result[1].toString().includes('Skeleton of Page2'));
+    t.false(result[1].toString().includes('Skeleton of Page2'));
 });
 
 test('it should insert skeleton route successfully', async t => {

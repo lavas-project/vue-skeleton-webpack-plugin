@@ -45,7 +45,7 @@ plugins: [
 ]
 ```
 
-在单页应用中开发模式下自动插入路由规则：
+在单页应用中**开发模式**下自动插入路由规则：
 ```js
 // webpack.dev.conf.js
 import SkeletonWebpackPlugin from 'vue-skeleton-webpack-plugin';
@@ -121,7 +121,12 @@ SPA 中多个 Skeleton:
 
 ### 简单的 Vue + Webpack 应用
 
-或者你可以参考[examples](https://github.com/lavas-project/vue-skeleton-webpack-plugin/tree/master/examples)下的测试用例，其中也包含了单页和多页情况。
+或者你可以参考[examples](https://github.com/lavas-project/vue-skeleton-webpack-plugin/tree/master/examples)下的测试用例，其中也包含了单页和多页情况，具体如下：
+* `/examples/simple` 最简单的 SPA，使用一个 Skeleton
+* `/examples/multi-skeleton` SPA，根据路由使用多个 Skeleton
+* `/examples/multipage` MPA，每个页面使用各自的 Skeleton，使用 `multipage-webpack-plugin`
+* `/examples/multipage2` MPA，每个页面使用各自的 Skeleton，使用多个 `html-webpack-plugin`
+* `/examples/multipage3` MPA，page1 使用 Skeleton，page2 不使用
 
 ## 常见问题
 
