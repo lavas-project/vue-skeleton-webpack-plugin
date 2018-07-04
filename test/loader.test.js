@@ -11,7 +11,8 @@ import Promise from 'bluebird';
 import test from 'ava';
 import {
     runWebpackCompilerMemoryFs,
-    testFs
+    testFs,
+    webpackMajorVersion
 } from './utils.js';
 
 import simpleConfig from '../examples/simple/webpack.config.js';
@@ -25,19 +26,27 @@ const readFile = Promise.promisify(fs.readFile, {context: fs});
 
 let webpackBuildStats = null;
 
-test.before('run webpack build first', async t => {
-    webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig);
-});
+if (webpackMajorVersion === '4') {
+    test.skip('will not be run', t => {
+        t.fail();
+    });
+}
+else {
 
-test('it should run successfully', async t => {
-    let {stats, errors} = webpackBuildStats;
-    t.falsy(stats.hasWarnings() && errors.hasWarnings());
-});
+    test.before('run webpack build first', async t => {
+        webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig);
+    });
 
-test('it should insert skeleton route into routes', async t => {
-    let htmlContent = await readFile(path.join(webpackBuildPath, 'static/js/app.js'));
-    htmlContent = htmlContent.toString();
-    let insertedRoute = `routes: [{
-        path: '/skeleton',`;
-    t.true(htmlContent.includes(insertedRoute));
-});
+    test('it should run successfully', async t => {
+        let {stats, errors} = webpackBuildStats;
+        t.falsy(stats.hasWarnings() && errors.hasWarnings());
+    });
+
+    test('it should insert skeleton route into routes', async t => {
+        let htmlContent = await readFile(path.join(webpackBuildPath, 'static/js/app.js'));
+        htmlContent = htmlContent.toString();
+        let insertedRoute = `routes: [{
+            path: '/skeleton',`;
+        t.true(htmlContent.includes(insertedRoute));
+    });
+}

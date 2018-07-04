@@ -30,7 +30,7 @@
     "bluebird": "^3.4.7",
     "buble": "^0.15.2",
     "css-loader": "^0.28.0",
-    "extract-text-webpack-plugin": "4.0.0-alpha.0",
+    "extract-text-webpack-plugin": "^3.0.0",
     "fecs": "^1.4.0",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
@@ -38,10 +38,11 @@
     "mini-css-extract-plugin": "^0.4.0",
     "multipage-webpack-plugin": "^0.4.0",
     "nyc": "^10.3.2",
+    "postcss-loader": "^2.1.5",
     "rimraf": "^2.6.0",
     "url-loader": "^1.0.1",
     "vue": "^2.3.3",
-    "vue-loader": "^14.0.0",
+    "vue-loader": "^15.0.0",
     "vue-router": "^2.7.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.4",
@@ -58,7 +59,7 @@
     "concurrency": 5,
     "failFast": true,
     "files": [
-      "test/multi-skeleton.test.js"
+      "test/*.test.js"
     ],
     "require": [
       "babel-register"

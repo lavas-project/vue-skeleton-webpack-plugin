@@ -15,11 +15,6 @@ const outputFileSystem = new MFS();
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
     if (webpackMajorVersion === '4') {
         config.mode = 'production';
-        // config.plugins.unshift(new webpack.LoaderOptionsPlugin({
-        //     options: {
-        //         context: process.cwd()
-        //     }
-        // }));
     }
 
     const compiler = webpack(config);
@@ -46,3 +41,5 @@ exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
 };
 
 exports.testFs = outputFileSystem;
+
+exports.webpackMajorVersion = webpackMajorVersion;

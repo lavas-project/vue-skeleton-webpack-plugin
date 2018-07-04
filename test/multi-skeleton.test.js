@@ -11,7 +11,8 @@ import Promise from 'bluebird';
 import test from 'ava';
 import {
     runWebpackCompilerMemoryFs,
-    testFs
+    testFs,
+    webpackMajorVersion
 } from './utils.js';
 
 import multipageConfig from '../examples/multi-skeleton/webpack.config.js';
@@ -25,17 +26,25 @@ const readFile = Promise.promisify(fs.readFile, {context: fs});
 
 let webpackBuildStats = null;
 
-test.before('run webpack build first', async t => {
-    webpackBuildStats = await runWebpackCompilerMemoryFs(multipageConfig);
-});
+if (webpackMajorVersion === '4') {
+    test.skip('will not be run', t => {
+        t.fail();
+    });
+}
+else {
 
-test('it should run successfully', async t => {
-    let {errors, warnings} = webpackBuildStats;
-    t.falsy(errors.length && warnings.length);
-});
+    test.before('run webpack build first', async t => {
+        webpackBuildStats = await runWebpackCompilerMemoryFs(multipageConfig);
+    });
 
-test('it should insert multi skeletons into index.html', async t => {
-    let result = await readFile(path.join(webpackBuildPath, 'index.html'));
-    let skeleton1DOM = '<div id=skeleton1 class=skeleton1-wrapper';
-    t.true(result.toString().includes(skeleton1DOM));
-});
+    test('it should run successfully', async t => {
+        let {errors, warnings} = webpackBuildStats;
+        t.falsy(errors.length && warnings.length);
+    });
+
+    test('it should insert multi skeletons into index.html', async t => {
+        let result = await readFile(path.join(webpackBuildPath, 'index.html'));
+        let skeleton1DOM = '<div id=skeleton1 class=skeleton1-wrapper';
+        t.true(result.toString().includes(skeleton1DOM));
+    });
+}
