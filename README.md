@@ -8,6 +8,8 @@ vue-skeleton-webpack-plugin
 
 这是一个基于 Vue 的 webpack 插件，为单页/多页应用生成骨架屏 skeleton，减少白屏时间，在页面完全渲染之前提升用户感知体验。
 
+支持 webpack@3 和 webpack@4 
+
 ## 基本实现
 
 参考了[饿了么的 PWA 升级实践](https://huangxuan.me/2017/07/12/upgrading-eleme-to-pwa/)一文，
@@ -127,8 +129,16 @@ SPA 中多个 Skeleton:
 * `/examples/multipage` MPA，每个页面使用各自的 Skeleton，使用 `multipage-webpack-plugin`
 * `/examples/multipage2` MPA，每个页面使用各自的 Skeleton，使用多个 `html-webpack-plugin`
 * `/examples/multipage3` MPA，page1 使用 Skeleton，page2 不使用
+* `/examples/webpack4` SPA，使用 `webpack@4`
 
 ## 常见问题
+
+### Webpack4
+
+插件需要使用与 Webpack 版本配套的插件进行样式分离。
+
+* Webpack 4 中使用 `mini-css-extract-plugin` 而非 `extract-text-webpack-plugin`，因此需要安装。
+* 安装 `vue-loader@^15.0.0` 并正确配置，可以参考 [vue-loader 文档](https://vue-loader.vuejs.org/zh/guide/extract-css.html#webpack-4)。
 
 ### 未开启样式分离
 

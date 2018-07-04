@@ -12,7 +12,8 @@ const utils = require('./utils');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const SkeletonWebpackPlugin = require('../../lib');
 
@@ -26,19 +27,21 @@ let webpackConfig = merge(baseWebpackConfig, {
             sourceMap: false,
             extract: true
         })
-        .concat(SkeletonWebpackPlugin.loader({
-            resource: resolve('src/entry.js'),
-            options: {
-                entry: 'skeleton',
-                routePathTemplate: '/skeleton',
-                importTemplate: 'import [name] from \'./[name].vue\';'
-            }
-        }))
+        // .concat(SkeletonWebpackPlugin.loader({
+        //     resource: resolve('src/entry.js'),
+        //     options: {
+        //         entry: 'skeleton',
+        //         routePathTemplate: '/skeleton',
+        //         importTemplate: 'import [name] from \'./[name].vue\';'
+        //     }
+        // }))
     },
     devtool: false,
     plugins: [
 
-        new ExtractTextPlugin({
+        new VueLoaderPlugin(),
+
+        new MiniCssExtractPlugin({
             filename: utils.assetsPath('css/[name].css')
         }),
 
@@ -58,7 +61,6 @@ let webpackConfig = merge(baseWebpackConfig, {
             webpackConfig: {
                 entry: {
                     app: resolve('./src/entry-skeleton.js')
-                    // app: [resolve('./src/entry-skeleton.js')]
                 }
             },
             quiet: true

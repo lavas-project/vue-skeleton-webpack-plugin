@@ -25,20 +25,33 @@ let webpackConfig = merge(baseWebpackConfig, {
         rules: utils.styleLoaders({
             sourceMap: false,
             extract: true
-        }).concat(SkeletonWebpackPlugin.loader({
-            resource: resolve('src/entry.js'),
-            options: {
-                entry: 'skeleton',
-                routePathTemplate: '/skeleton',
-                importTemplate: 'import [name] from \'./[name].vue\';'
-            }
-        }))
+        })
+        // .concat(SkeletonWebpackPlugin.loader({
+        //     resource: resolve('src/entry.js'),
+        //     options: {
+        //         entry: 'skeleton',
+        //         routePathTemplate: '/skeleton',
+        //         importTemplate: 'import [name] from \'./[name].vue\';'
+        //     }
+        // }))
     },
     devtool: false,
     plugins: [
 
         new ExtractTextPlugin({
             filename: utils.assetsPath('css/[name].css')
+        }),
+
+        new HtmlWebpackPlugin({
+            filename: utils.assetsPath('../index.html'),
+            template: path.join(__dirname, './index.html'),
+            inject: true,
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeAttributeQuotes: true
+            },
+            chunksSortMode: 'dependency'
         }),
 
         new SkeletonWebpackPlugin({
@@ -62,18 +75,6 @@ let webpackConfig = merge(baseWebpackConfig, {
                     }
                 ]
             }
-        }),
-
-        new HtmlWebpackPlugin({
-            filename: utils.assetsPath('../index.html'),
-            template: path.join(__dirname, './index.html'),
-            inject: true,
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeAttributeQuotes: true
-            },
-            chunksSortMode: 'dependency'
         })
     ]
 });

@@ -1,5 +1,5 @@
 /**
- * @file a simple test case
+ * @file a simple test case for webpack 4
  * @author panyuqi (pyqiverson@gmail.com)
  */
 
@@ -15,23 +15,18 @@ import {
     webpackMajorVersion
 } from './utils.js';
 
-import simpleConfig from '../examples/simple/webpack.config.js';
-
 const fs = testFs;
 
-const simpleExamplePath = path.resolve(__dirname, '../examples/simple');
+const simpleExamplePath = path.resolve(__dirname, '../examples/webpack4');
 const webpackBuildPath = path.resolve(simpleExamplePath, './dist');
 
 const readFile = Promise.promisify(fs.readFile, {context: fs});
 
 let webpackBuildStats = null;
 
-if (webpackMajorVersion === '4') {
-    test.skip('will not be run', t => {
-        t.fail();
-    });
-}
-else {
+if (webpackMajorVersion  === '4') {
+    let simpleConfig = require('../examples/webpack4/webpack.config.js');
+
     test.before('run webpack build first', async t => {
         webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig);
     });
@@ -62,5 +57,10 @@ else {
 
         // autoprefixer
         t.true(htmlContent.includes('display: -webkit-box;'));
+    });
+}
+else {
+    test.skip('will not be run', t => {
+        t.fail();
     });
 }
