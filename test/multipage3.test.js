@@ -11,7 +11,8 @@ import Promise from 'bluebird';
 import test from 'ava';
 import {
     runWebpackCompilerMemoryFs,
-    testFs
+    testFs,
+    webpackMajorVersion
 } from './utils.js';
 
 import multipageConfig from '../examples/multipage3/webpack.config.js';
@@ -25,26 +26,33 @@ const readFile = Promise.promisify(fs.readFile, {context: fs});
 
 let webpackBuildStats = null;
 
-test.before('run webpack build first', async t => {
-    webpackBuildStats = await runWebpackCompilerMemoryFs(multipageConfig);
-});
+if (webpackMajorVersion === '4') {
+    test.skip('will not be run', t => {
+        t.fail();
+    });
+}
+else {
+    test.before('run webpack build first', async t => {
+        webpackBuildStats = await runWebpackCompilerMemoryFs(multipageConfig);
+    });
 
-test('it should run successfully', async t => {
-    let {stats, errors} = webpackBuildStats;
-    t.falsy(stats.hasWarnings() && errors.hasWarnings());
-});
+    test('it should run successfully', async t => {
+        let {stats, errors} = webpackBuildStats;
+        t.falsy(stats.hasWarnings() && errors.hasWarnings());
+    });
 
-test('it should insert skeleton into page1, but not page2', async t => {
-    let result = await Promise.all([
-        readFile(path.join(webpackBuildPath, 'page1.html')),
-        readFile(path.join(webpackBuildPath, 'page2.html'))
-    ]);
-    t.true(result[0].toString().includes('Skeleton of Page1'));
-    t.false(result[1].toString().includes('Skeleton of Page2'));
-});
+    test('it should insert skeleton into page1, but not page2', async t => {
+        let result = await Promise.all([
+            readFile(path.join(webpackBuildPath, 'page1.html')),
+            readFile(path.join(webpackBuildPath, 'page2.html'))
+        ]);
+        t.true(result[0].toString().includes('Skeleton of Page1'));
+        t.false(result[1].toString().includes('Skeleton of Page2'));
+    });
 
-test('it should insert skeleton route successfully', async t => {
-    let page1JSContent = await readFile(path.join(webpackBuildPath, 'static/js/page1.js'));
-    let insertedRoute = 'path: \'/page1-skeleton\'';
-    t.true(page1JSContent.toString().includes(insertedRoute));
-});
+    test('it should insert skeleton route successfully', async t => {
+        let page1JSContent = await readFile(path.join(webpackBuildPath, 'static/js/page1.js'));
+        let insertedRoute = 'path: \'/page1-skeleton\'';
+        t.true(page1JSContent.toString().includes(insertedRoute));
+    });
+}

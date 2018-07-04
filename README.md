@@ -129,6 +129,7 @@ SPA 中多个 Skeleton:
 * `/examples/multipage` MPA，每个页面使用各自的 Skeleton，使用 `multipage-webpack-plugin`
 * `/examples/multipage2` MPA，每个页面使用各自的 Skeleton，使用多个 `html-webpack-plugin`
 * `/examples/multipage3` MPA，page1 使用 Skeleton，page2 不使用
+* `/examples/webpack4` SPA，使用 `webpack@4`
 
 ## 常见问题
 
