@@ -8,7 +8,7 @@ vue-skeleton-webpack-plugin
 
 这是一个基于 Vue 的 webpack 插件，为单页/多页应用生成骨架屏 skeleton，减少白屏时间，在页面完全渲染之前提升用户感知体验。
 
-支持 webpack@3 和 webpack@4 
+支持 webpack@3 和 webpack@4，支持 Hot reload。
 
 ## 基本实现
 
@@ -47,25 +47,6 @@ plugins: [
 ]
 ```
 
-在单页应用中**开发模式**下自动插入路由规则：
-```js
-// webpack.dev.conf.js
-import SkeletonWebpackPlugin from 'vue-skeleton-webpack-plugin';
-
-module: {
-    rules: [
-        SkeletonWebpackPlugin.loader({
-            resource: resolve('src/entry.js'),
-            options: {
-                entry: 'skeleton',
-                routePathTemplate: '/skeleton',
-                importTemplate: 'import Skeleton from \'./Skeleton.vue\';'
-            }
-        })
-    ]
-}
-```
-
 ## 参数说明
 
 ### SkeletonWebpackPlugin
@@ -80,29 +61,9 @@ module: {
         - skeletonId Skeleton DOM 的 id
 - minimize *选填* SPA 下是否需要压缩注入 HTML 的 JS 代码
 
-### SkeletonWebpackPlugin.loader
+### [DEPRECATED] SkeletonWebpackPlugin.loader
 
-参数分为两类：
-1. [ webpack模块规则](https://doc.webpack-china.org/configuration/module/#rule)，skeleton 对应的路由将被插入路由文件中，所以需要指定一个或多个路由文件，使用`resource/include/test`皆可指定 loader 应用的文件。
-2. `options` 将被传入 loader 中的参数对象，包含以下属性：
-    - entry *必填*，支持字符串和数组类型，对应页面入口的名称
-    - importTemplate *选填*，引入 skeleton 组件的表达式，默认值为`'import [nameCap] from \'@/pages/[nameCap].vue\';'`
-    - routePathTemplate *选填*，路由路径，默认值为`'/skeleton-[name]'`
-    - insertAfter *选填*，路由插入位置，默认值为`'routes: ['`
-
-在`importTemplate`和`routePathTemplate`中可以使用以下占位符：
-- `[name]` 和`entry`保持一致
-- `[nameCap]` `entry`首字母大写
-- `[nameHash]` 使用`entry`名称生成 hash，避免名称中包含例如连字符的情况
-
-例如使用以下配置，将向路由文件中插入`'import Page1 from \'@/pages/Page1.vue\';'`和`'import Page2 from \'@/pages/Page2.vue\';'`两条语句。同时生成`/skeleton-page1`和`/skeleton-page2`两条路由规则。
-```js
-{
-    entry: ['page1', 'page2'],
-    importTemplate: 'import [nameCap] from \'@/pages/[nameCap].vue\';',
-    routePathTemplate: '/skeleton-[name]'
-}
-```
+开发模式已经支持 hot reload，该参数不再需要。
 
 ## 示例
 
@@ -152,3 +113,7 @@ SPA 中多个 Skeleton:
 在 Webpack 中样式分离是通过 [extract-text-webpack-plugin](https://doc.webpack-china.org/plugins/extract-text-webpack-plugin) 插件实现的。因此在 `webpack.skeleton.config` 中必须正确配置该插件。
 
 以使用 vue-cli 创建的项目为例，如果你的 `webpack.skeleton.conf` 继承自 `webpack.base.conf`，在开发模式下是默认关闭样式分离的，因此需要修改，可参考[修改方案](https://github.com/lavas-project/vue-skeleton-webpack-plugin/issues/11#issuecomment-377845362)。
+
+### 压缩注入的 HTML 和 CSS
+
+使用 `html-webpack-plugin` 的 `minify` 选项，可以参考 [#36](https://github.com/lavas-project/vue-skeleton-webpack-plugin/issues/36)。

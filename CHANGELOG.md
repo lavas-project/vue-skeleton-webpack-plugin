@@ -2,6 +2,11 @@ Change History
 ==============
 
 =======
+v1.2.1
+---
+* [Feature] 支持 hot reload, 原有 `SkeletonWebpackPlugin.loader` 已废弃
+* [Fix] #38
+
 v1.1.18
 ---
 * [Feature] 支持 Webpack 4 #13

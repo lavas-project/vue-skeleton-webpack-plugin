@@ -120,7 +120,7 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
                 // create renderer with bundle
                 let renderer = createBundleRenderer(bundle);
                 // use vue ssr to render skeleton
-                renderer.renderToString({}, (err, skeletonHtml) => {
+                renderer.renderToString({}, (err, skeletonHTML) => {
                     if (err) {
                         reject(err);
                     }
@@ -128,7 +128,7 @@ module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, c
                         if (webpackMajorVersion !== '4') {
                             compilation.options.module.rules = originalRules;
                         }
-                        resolve({skeletonHtml, skeletonCSS});
+                        resolve({skeletonHTML, skeletonCSS});
                     }
                 });
             }
