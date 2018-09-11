@@ -25,43 +25,60 @@ class SkeletonPlugin {
     }
 
     apply(compiler) {
+        let skeletons;
         // compatible with webpack 4.x
         if (compiler.hooks) {
-            compiler.hooks.compilation.tap(PLUGIN_NAME, compilation => {
+            compiler.hooks.make.tapAsync(PLUGIN_NAME, (compilation, cb) => {
                 if (!compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing) {
                     console.error('VueSkeletonWebpackPlugin must be placed after HtmlWebpackPlugin in `plugins`.');
                     return;
                 }
 
+                this.generateSkeletonForEntries(this.extractEntries(compiler.options.entry), compiler, compilation)
+                    .then(skeletonResults => {
+                        skeletons = skeletonResults.reduce((cur, prev) => Object.assign(prev, cur), {});
+                        cb();
+                    })
+                    .catch(e => console.log(e));
+
                 compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
-                    this.generateSkeleton(compiler, compilation, this.options, htmlPluginData, callback);
+                    this.injectToHtml(htmlPluginData, skeletons);
+                    callback(null, htmlPluginData);
                 });
             });
         }
         else {
-            compiler.plugin('compilation', compilation => {
+            compiler.plugin('make', (compilation, cb) => {
+                this.generateSkeletonForEntries(this.extractEntries(compiler.options.entry), compiler, compilation)
+                    .then(skeletonResults => {
+                        skeletons = skeletonResults.reduce((cur, prev) => Object.assign(prev, cur), {});
+                        cb();
+                    })
+                    .catch(e => console.log(e));
+                
                 compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
-                    this.generateSkeleton(compiler, compilation, this.options, htmlPluginData, callback);
+                    this.injectToHtml(htmlPluginData, skeletons);
+                    callback(null, htmlPluginData);
                 });
             });
         }
     }
 
-    generateSkeleton(compiler, compilation, options, htmlPluginData, callback) {
-        let {insertAfter, quiet, router, minimize} = options;
-
-        let webpackConfig = Object.assign({}, options.webpackConfig)
-
-        let entry = webpackConfig.entry;
-        // cache entries
+    /**
+     * format entries for all skeletons from options
+     * 
+     * @param {Object} parentEntry entry in webpack.config
+     * @return {Object} entries entries for all skeletons
+     */
+    extractEntries(parentEntry) {
+        let entry = Object.assign({}, this.options.webpackConfig.entry);
         let skeletonEntries;
 
         if (isObject(entry)) {
-            skeletonEntries = Object.assign({}, entry);
+            skeletonEntries = entry;
         }
         else {
             let entryName = DEFAULT_ENTRY_NAME;
-            let parentEntry = compiler.options.entry;
 
             if (isObject(parentEntry)) {
                 entryName = Object.keys(parentEntry)[0];
@@ -71,50 +88,96 @@ class SkeletonPlugin {
             };
         }
 
-        let usedChunks = Object.keys(htmlPluginData.assets.chunks);
+        return skeletonEntries;
+    }
+
+    /**
+     * find skeleton for current html-plugin in all skeletons
+     * 
+     * @param {Object} htmlPluginData data for html-plugin
+     * @param {Object} skeletons skeletons
+     * @param {Object} target skeleton
+     */
+    findSkeleton(htmlPluginData, skeletons = {}) {
+        const usedChunks = Object.keys(htmlPluginData.assets.chunks);
         let entryKey;
 
         // find current processing entry
         if (Array.isArray(usedChunks)) {
-            entryKey = Object.keys(skeletonEntries).find(v => usedChunks.indexOf(v) > -1);
+            entryKey = Object.keys(skeletons).find(v => usedChunks.indexOf(v) > -1);
         }
         else {
             entryKey = DEFAULT_ENTRY_NAME;
         }
-        // make sure current entry has skeleton config, fix #23
-        if (entryKey) {
+
+        return skeletons[entryKey];
+    }
+
+    /**
+     * inject HTML, CSS and JS
+     * 
+     * @param {Object} htmlPluginData data for html-plugin
+     * @param {Object} skeletons skeletons
+     */
+    injectToHtml(htmlPluginData, skeletons = {}) {
+        const {insertAfter} = this.options;
+        const skeleton = this.findSkeleton(htmlPluginData, skeletons);
+        if (!skeleton) {
+            console.log('Empty entry for skeleton, please check your webpack.config.');
+            return;
+        }
+        const {html = '', css = '', script = ''} = skeleton;
+        
+        // insert inlined styles into html
+        let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
+        htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${css}</style>`, headTagEndPos);
+
+        // replace mounted point with ssr result in html
+        let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
+        htmlPluginData.html = insertAt(htmlPluginData.html, html + script, appPos);
+    }
+
+    /**
+     * generate skeletons for all entries
+     * 
+     * @param {Object} entries entries for all skeletons
+     * @param {Object} compiler compiler
+     * @param {Object} compilation compilation
+     * @return {Promise} promise
+     */
+    generateSkeletonForEntries(entries, compiler, compilation) {
+        const {router, minimize, quiet} = this.options;
+
+        return Promise.all(Object.keys(entries).map(entryKey => {
+            let skeletonWebpackConfig = Object.assign({}, this.options.webpackConfig);
+
             // set current entry & output in webpack config
-            webpackConfig.entry = skeletonEntries[entryKey];
-            if (!webpackConfig.output) {
-                webpackConfig.output = {};
+            skeletonWebpackConfig.entry = entries[entryKey];
+            if (!skeletonWebpackConfig.output) {
+                skeletonWebpackConfig.output = {};
             }
-            webpackConfig.output.filename = `skeleton-${entryKey}.js`;
+            skeletonWebpackConfig.output.filename = `skeleton-${entryKey}.js`;
 
-            ssr(webpackConfig, {
+            // inject router code in SPA mode
+            let routerScript = '';
+            if (router) {
+                const isMPA = !!(Object.keys(entries).length > 1);
+                routerScript = generateRouterScript(router, minimize, isMPA, entryKey);
+            }
+
+            // server side render skeleton for current entry
+            return ssr(skeletonWebpackConfig, {
                 quiet, compilation, context: compiler.context
-            }).then(({skeletonHtml, skeletonCSS, watching}) => {
-                // insert inlined styles into html
-                let headTagEndPos = htmlPluginData.html.lastIndexOf('</head>');
-                htmlPluginData.html = insertAt(htmlPluginData.html, `<style>${skeletonCSS}</style>`, headTagEndPos);
-
-                // replace mounted point with ssr result in html
-                let appPos = htmlPluginData.html.lastIndexOf(insertAfter) + insertAfter.length;
-
-                // inject router code in SPA mode
-                let routerScript = '';
-                if (router) {
-                    let isMPA = !!(Object.keys(skeletonEntries).length > 1);
-                    routerScript = generateRouterScript(router, minimize, isMPA, entryKey);
-                }
-                htmlPluginData.html = insertAt(htmlPluginData.html, skeletonHtml + routerScript, appPos);
-                callback(null, htmlPluginData);
-            }).catch((e) => {
-                console.log(e);
+            }).then(({skeletonHTML, skeletonCSS}) => {
+                return {
+                    [entryKey]: {
+                        html: skeletonHTML,
+                        css: skeletonCSS,
+                        script: routerScript
+                    }
+                };
             });
-        }
-        else {
-            callback(null, htmlPluginData);
-        }
+        }));
     }
 
     static loader(ruleOptions = {}) {
