@@ -181,6 +181,7 @@ class SkeletonPlugin {
     }
 
     static loader(ruleOptions = {}) {
+        console.log('[DEPRECATED] SkeletonPlugin.loader is DEPRECATED now. Hot reload in dev mode is supported already, so you can remove this option.');
         return Object.assign(ruleOptions, {
             loader: require.resolve('./loader'),
             options: Object.assign({}, ruleOptions.options)
