@@ -16,13 +16,17 @@ const LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin');
 const ExternalsPlugin = require('webpack/lib/ExternalsPlugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 const createBundleRenderer = require('vue-server-renderer').createBundleRenderer;
 const nodeExternals = require('webpack-node-externals');
 
 let MiniCssExtractPlugin;
+let ExtractTextPlugin;
 if (webpackMajorVersion === '4') {
     MiniCssExtractPlugin = require('mini-css-extract-plugin');
+}
+else {
+    ExtractTextPlugin = require('extract-text-webpack-plugin');
 }
 
 module.exports = function renderSkeleton (serverWebpackConfig, {quiet = false, compilation, context}) {
