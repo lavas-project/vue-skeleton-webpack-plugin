@@ -58,8 +58,8 @@ plugins: [
 - router *选填* SPA 下配置各个路由路径对应的 Skeleton
     - mode *选填* 路由模式，两个有效值 `history|hash`
     - routes *选填* 路由数组，其中每个路由对象包含两个属性：
-        - path 路由路径
-        - skeletonId Skeleton DOM 的 id
+        - path 路由路径 `string|RegExp`
+        - skeletonId Skeleton DOM 的 id `string`
 - minimize *选填* SPA 下是否需要压缩注入 HTML 的 JS 代码
 
 ### [DEPRECATED] SkeletonWebpackPlugin.loader
@@ -92,6 +92,7 @@ SPA 中多个 Skeleton:
 * `/examples/multipage2` MPA，每个页面使用各自的 Skeleton，使用多个 `html-webpack-plugin`
 * `/examples/multipage3` MPA，page1 使用 Skeleton，page2 不使用
 * `/examples/webpack4` SPA，使用 `webpack@4`
+* `/examples/vue-cli3` SPA，使用 `vue-cli@3` 创建的项目
 
 ## 常见问题
 
@@ -118,3 +119,8 @@ SPA 中多个 Skeleton:
 ### 压缩注入的 HTML 和 CSS
 
 使用 `html-webpack-plugin` 的 `minify` 选项，可以参考 [#36](https://github.com/lavas-project/vue-skeleton-webpack-plugin/issues/36)。
+
+### 使用多个 Skeleton 时无法匹配当前路由路径？
+
+用于匹配每个 `Skeleton` 的 `path` 选项可以填写字符串或者**正则**。
+如果想匹配 `/page1?key=value` 这样的路由路径，可以直接写正则 `path: /^\/page1/`。可以参考 [#45]
